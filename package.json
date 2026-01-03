@@ -7,7 +7,10 @@
     "build": "node scripts/build.mjs",
     "lint:ext": "web-ext lint --source-dir dist",
     "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest --filename \"{name}-{version}.xpi\"",
-    "ci": "npm run build && npm run lint:ext && npm run package"
+    "ci": "npm run build && npm run lint:ext && npm run package",
+    "bump:patch": "node scripts/bump-version.mjs patch",
+    "bump:minor": "node scripts/bump-version.mjs minor",
+    "bump:major": "node scripts/bump-version.mjs major"
   },
   "devDependencies": {
     "esbuild": "^0.27.2",
