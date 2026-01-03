@@ -1,5 +1,5 @@
 /* global browser */
-import * as FJ from "../vendor/fracturedjsonjs/dist/index.js";
+import * as FJ from "../vendor/fracturedjsonjs/fracturedjson.esm.js";
 
 // Handle different bundling/export shapes (ESM vs CJS-interop)
 const Formatter = FJ.Formatter ?? FJ.default?.Formatter;

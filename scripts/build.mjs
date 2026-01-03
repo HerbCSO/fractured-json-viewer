@@ -1,3 +1,4 @@
+import { build } from "esbuild";
 import { mkdir, cp, rm, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -62,6 +63,18 @@ await copyFile(
   "node_modules/prismjs/themes/prism.css",
   "dist/vendor/prism/prism.css"
 );
+
+await build({
+  entryPoints: ["node_modules/fracturedjsonjs/dist/index.js"],
+  bundle: true,
+  format: "esm",
+  platform: "browser",
+  target: ["es2020"],
+  outfile: "dist/vendor/fracturedjsonjs/fracturedjson.esm.js",
+  sourcemap: false
+});
+
+console.log("Bundled fracturedjsonjs to dist/vendor/fracturedjsonjs/fracturedjson.esm.js");
 
 // Optional: prune any dev-only files you might have copied accidentally
 // (e.g., source maps, docs). Keep it simple for now.
