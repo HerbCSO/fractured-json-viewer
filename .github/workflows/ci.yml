@@ -27,9 +27,9 @@ jobs:
         run: npm run ci
         # web-ext build uses --source-dir and --artifacts-dir :contentReference[oaicite:6]{index=6}
 
-      - name: Upload packaged extension
+      - name: Upload XPI
         uses: actions/upload-artifact@v4
         with:
           name: fractured-json-viewer-xpi
-          path: artifacts/*
+          path: artifacts/*.xpi
         # upload-artifact v4 usage :contentReference[oaicite:7]{index=7}

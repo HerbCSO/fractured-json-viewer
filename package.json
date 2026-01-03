@@ -6,7 +6,7 @@
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs",
     "lint:ext": "web-ext lint --source-dir dist",
-    "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest",
+    "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest --filename \"{name}-{version}.xpi\"",
     "ci": "npm run build && npm run lint:ext && npm run package"
   },
   "devDependencies": {
