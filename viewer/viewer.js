@@ -1,5 +1,29 @@
 /* global browser */
-import { Formatter, FracturedJsonOptions } from "../vendor/fracturedjsonjs/dist/index.js";
+import * as FJ from "../vendor/fracturedjsonjs/dist/index.js";
+
+// Handle different bundling/export shapes (ESM vs CJS-interop)
+const Formatter = FJ.Formatter ?? FJ.default?.Formatter;
+
+function getRecommendedOptions() {
+  // Preferred: a static Recommended() helper, if present
+  const Recommended =
+    FJ.FracturedJsonOptions?.Recommended ??
+    FJ.default?.FracturedJsonOptions?.Recommended;
+
+  if (typeof Recommended === "function") return Recommended();
+
+  // Fallback: instantiate an options class if exported under a different name
+  const OptionsCtor =
+    FJ.FracturedJsonOptions ??
+    FJ.Options ??
+    FJ.default?.FracturedJsonOptions ??
+    FJ.default?.Options;
+
+  if (typeof OptionsCtor === "function") return new OptionsCtor();
+
+  // Last resort: plain object; Formatter.Options in this lib is a bag of settings
+  return {};
+}
 
 const SETTINGS_KEY = "fjv_settings";
 const DEFAULTS = {
@@ -48,7 +72,15 @@ async function fetchText(url) {
 }
 
 function formatJsonText(jsonText, s) {
-  const options = FracturedJsonOptions.Recommended();
+  if (!Formatter) {
+    throw new Error(
+      "fracturedjsonjs Formatter export not found. Check vendor/fracturedjsonjs/dist contents."
+    );
+  }
+
+  const options = getRecommendedOptions();
+
+  // Apply your settings (works whether options is a class instance or plain object)
   options.MaxTotalLineLength = s.maxLineLength;
   options.IndentSpaces = s.indentSpaces;
   options.CommaPadding = s.commaPadding;
@@ -57,6 +89,7 @@ function formatJsonText(jsonText, s) {
 
   const formatter = new Formatter();
   formatter.Options = options;
+
   return formatter.Reformat(jsonText);
 }
 
