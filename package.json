@@ -2,7 +2,7 @@
   "name": "fractured-json-viewer-extension",
   "private": true,
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs",
