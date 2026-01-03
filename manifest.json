@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Fractured JSON Link Viewer",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "license": "MIT",
   "description": "Formats JSON navigations using FracturedJsonJs with highlighting + virtualized tree.",
   "permissions": [
