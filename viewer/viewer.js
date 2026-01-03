@@ -112,6 +112,15 @@ function classify(v) {
   }
 }
 
+function valueForClipboard(v) {
+  if (v === null) return "null";
+  const t = typeof v;
+  if (t === "string") return v; // no quotes
+  if (t === "number" || t === "boolean") return String(v);
+  // arrays/objects (and any other non-primitive): JSON
+  return JSON.stringify(v, null, 2);
+}
+
 function previewOf(v) {
   const t = classify(v);
   if (t === "string") return JSON.stringify(v.length > 200 ? v.slice(0, 200) + "…" : v);
@@ -344,6 +353,13 @@ function setRowContent(rowEl, n, { query, pathFormat }) {
   rowEl.dataset.jsonpath = jpath;
   rowEl.dataset.path = pathFormat === "jsonpath" ? jpath : pointer;
 
+  // Copy metadata
+  rowEl.dataset.key = (n.key == null) ? "" : String(n.key);
+  rowEl.dataset.value = valueForClipboard(n.value);
+  rowEl.dataset.keyValue = (n.key == null)
+    ? rowEl.dataset.value
+    : `${rowEl.dataset.key}: ${rowEl.dataset.value}`;
+
   // Clear existing content (no innerHTML)
   while (node.firstChild) node.removeChild(node.firstChild);
 
@@ -409,6 +425,55 @@ function setActiveView(which) {
 async function copyToClipboard(text) {
   await navigator.clipboard.writeText(text);
 }
+
+let activeCopyMenu = null;
+
+function closeCopyMenu() {
+  if (activeCopyMenu) activeCopyMenu.remove();
+  activeCopyMenu = null;
+}
+
+function openCopyMenu({ x, y, items }) {
+  closeCopyMenu();
+
+  const menu = document.createElement("div");
+  menu.className = "copyMenu";
+  menu.style.left = `${x}px`;
+  menu.style.top = `${y}px`;
+
+  for (const it of items) {
+    if (it.hidden) continue;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "copyMenuItem";
+    btn.textContent = it.label;
+    btn.addEventListener("click", async () => {
+      try {
+        await copyToClipboard(it.value);
+        showToast(it.toast ?? "Copied");
+      } finally {
+        closeCopyMenu();
+      }
+    });
+    menu.appendChild(btn);
+  }
+
+  document.body.appendChild(menu);
+  activeCopyMenu = menu;
+
+  // clamp inside viewport
+  const r = menu.getBoundingClientRect();
+  if (r.right > window.innerWidth) menu.style.left = `${Math.max(0, x - r.width)}px`;
+  if (r.bottom > window.innerHeight) menu.style.top = `${Math.max(0, y - r.height)}px`;
+}
+
+document.addEventListener("click", (e) => {
+  // close unless click is inside menu
+  if (activeCopyMenu && !activeCopyMenu.contains(e.target)) closeCopyMenu();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeCopyMenu();
+});
 
 /** ---------- Main ---------- **/
 
@@ -500,13 +565,24 @@ async function copyToClipboard(text) {
       });
 
       // Right-click: copy path
-      el.addEventListener("contextmenu", async (ev) => {
+      el.addEventListener("contextmenu", (ev) => {
         ev.preventDefault();
+
         const path = el.dataset.path || "";
-        if (path) {
-          await copyToClipboard(path);
-          showToast(`Copied path: ${path}`);
-        }
+        const key = el.dataset.key || "";
+        const value = el.dataset.value || "";
+        const keyValue = el.dataset.keyValue || value;
+
+        openCopyMenu({
+          x: ev.clientX,
+          y: ev.clientY,
+          items: [
+            { label: "Copy path", value: path, toast: "Copied path", hidden: !path },
+            { label: "Copy key", value: key, toast: "Copied key", hidden: !key },
+            { label: "Copy value", value: value, toast: "Copied value", hidden: value === "" },
+            { label: "Copy key: value", value: keyValue, toast: "Copied key: value", hidden: !key },
+          ],
+        });
       });
 
       rowsEl.appendChild(el);

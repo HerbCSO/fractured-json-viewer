@@ -107,3 +107,31 @@ pre.code {
   font-size: 12px;
   line-height: 1.35;
 }
+
+.copyMenu {
+  position: fixed;
+  z-index: 999999;
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(30,30,30,0.98);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+}
+
+.copyMenuItem {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.copyMenuItem:hover {
+  background: rgba(255,255,255,0.16);
+}
