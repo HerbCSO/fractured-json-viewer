@@ -64,4 +64,12 @@ browser.webRequest.onHeadersReceived.addListener(
   ["blocking", "responseHeaders"]
 );
 
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area !== "local") return;
+  if (changes.fjv_enabled) {
+    enabled = !!changes.fjv_enabled.newValue;
+    updateBrowserAction().catch(console.error);
+  }
+});
+
 loadEnabled().catch(console.error);

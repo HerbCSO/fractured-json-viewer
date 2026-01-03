@@ -35,6 +35,7 @@ const COPY = [
   "background.js",
   "viewer",
   "options",
+  "popup",
   "icons"
 ];
 
