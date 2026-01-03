@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fractured JSON Viewer – Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <h1>Fractured JSON Viewer – Options</h1>
+
+    <section class="card">
+      <h2>Formatting (FracturedJson)</h2>
+
+      <div class="row">
+        <label>Indent spaces</label>
+        <input id="indentSpaces" type="number" min="0" max="16" step="1" />
+      </div>
+
+      <div class="row">
+        <label>Max line length</label>
+        <input id="maxLineLength" type="number" min="40" max="400" step="1" />
+      </div>
+
+      <div class="row">
+        <label><input id="commaPadding" type="checkbox" /> Comma padding</label>
+      </div>
+
+      <div class="row">
+        <label><input id="colonPadding" type="checkbox" /> Colon padding</label>
+      </div>
+
+      <div class="row">
+        <label><input id="preserveBlankLines" type="checkbox" /> Preserve blank lines</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Viewer</h2>
+
+      <div class="row">
+        <label>Row height (px)</label>
+        <input id="rowHeight" type="number" min="14" max="40" step="1" />
+      </div>
+
+      <div class="row">
+        <label>Overscan rows</label>
+        <input id="overscan" type="number" min="2" max="50" step="1" />
+      </div>
+
+      <div class="row">
+        <label><input id="expandMatches" type="checkbox" /> Auto-expand matches</label>
+      </div>
+
+      <div class="row">
+        <label>Path format</label>
+        <select id="pathFormat">
+          <option value="json_pointer">JSON Pointer</option>
+          <option value="jsonpath">JSONPath-ish</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="saveBtn">Save</button>
+      <button id="resetBtn">Reset defaults</button>
+      <span id="status"></span>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

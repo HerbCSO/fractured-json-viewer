@@ -1,0 +1,17 @@
+{
+  "name": "fractured-json-viewer-extension",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "node scripts/build.mjs",
+    "lint:ext": "web-ext lint --source-dir dist",
+    "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest",
+    "ci": "npm run build && npm run lint:ext && npm run package"
+  },
+  "devDependencies": {
+    "fracturedjsonjs": "^5.0.1",
+    "prismjs": "^1.29.0",
+    "web-ext": "^9.2.0"
+  }
+}

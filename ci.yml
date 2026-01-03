@@ -1,0 +1,35 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Checks out repo into $GITHUB_WORKSPACE :contentReference[oaicite:4]{index=4}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+        # setup-node supports caching for npm :contentReference[oaicite:5]{index=5}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build + lint + package
+        run: npm run ci
+        # web-ext build uses --source-dir and --artifacts-dir :contentReference[oaicite:6]{index=6}
+
+      - name: Upload packaged extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: fractured-json-viewer-xpi
+          path: artifacts/*
+        # upload-artifact v4 usage :contentReference[oaicite:7]{index=7}

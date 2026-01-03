@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fractured JSON Viewer</title>
+    <link rel="stylesheet" href="../vendor/prism/prism.css" />
+    <link rel="stylesheet" href="viewer.css" />
+  </head>
+  <body>
+    <header>
+      <div class="title">Fractured JSON Viewer</div>
+      <div class="subtitle" id="sourceUrl"></div>
+
+      <div class="toolbar">
+        <div class="group">
+          <button id="viewTreeBtn" class="active">Tree</button>
+          <button id="viewTextBtn">Text</button>
+        </div>
+
+        <div class="group grow">
+          <input id="filterInput" type="search" placeholder="Filter (keys/values)…" />
+          <label class="chk"><input id="expandMatchesChk" type="checkbox" /> expand matches</label>
+          <button id="clearFilterBtn">Clear</button>
+        </div>
+
+        <div class="group">
+          <button id="expandAllBtn">Expand all</button>
+          <button id="collapseAllBtn">Collapse all</button>
+        </div>
+
+        <div class="group">
+          <button id="copyBtn">Copy formatted</button>
+          <button id="rawBtn">Open raw</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="treeView" class="panel">
+        <div id="treeScroll" class="tree-scroll">
+          <div id="treeSpacer" class="tree-spacer"></div>
+          <div id="treeRows" class="tree-rows"></div>
+        </div>
+        <div id="toast" class="toast hidden"></div>
+      </section>
+
+      <section id="textView" class="panel hidden">
+        <pre class="code"><code id="code" class="language-json"></code></pre>
+      </section>
+    </main>
+
+    <script>
+      // Prism manual mode prevents auto-highlight before we inject content. :contentReference[oaicite:8]{index=8}
+      window.Prism = window.Prism || {};
+      Prism.manual = true;
+    </script>
+    <script src="../vendor/prism/prism.js"></script>
+    <script src="../vendor/prism/prism-json.js"></script>
+
+    <script type="module" src="viewer.js"></script>
+  </body>
+</html>
