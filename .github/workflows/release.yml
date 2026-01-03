@@ -74,16 +74,22 @@ jobs:
       - name: Build + lint + package
         run: npm run ci
 
-      - name: Upload XPI artifact
+      - name: Sign (unlisted) with AMO and download signed XPI
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
+        run: npm run sign:unlisted
+
+      - name: Upload signed XPI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fractured-json-viewer-xpi
-          path: artifacts/*.xpi
+          name: fractured-json-viewer-signed-xpi
+          path: artifacts-signed/*.xpi
 
-      - name: Create GitHub Release + attach XPI (auto notes)
+      - name: Create GitHub Release + attach signed XPI
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump.outputs.version }}
           name: v${{ steps.bump.outputs.version }}
           generate_release_notes: true
-          files: artifacts/*.xpi
+          files: artifacts-signed/*.xpi
