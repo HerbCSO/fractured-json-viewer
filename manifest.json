@@ -3,6 +3,7 @@
   "name": "Fractured JSON Link Viewer",
   "version": "0.4.1",
   "description": "Formats JSON navigations using FracturedJsonJs with highlighting + virtualized tree.",
+  "license": "MIT",
   "permissions": [
     "webRequest",
     "webRequestBlocking",

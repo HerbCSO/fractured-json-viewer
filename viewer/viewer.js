@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /* global browser */
 import * as FJ from "../vendor/fracturedjsonjs/fracturedjson.esm.js";
 

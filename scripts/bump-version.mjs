@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 import fs from "node:fs/promises";
 
 const bump = process.argv[2] ?? "patch";

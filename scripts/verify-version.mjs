@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT
 import fs from "node:fs/promises";
 
 const pkg = JSON.parse(await fs.readFile("package.json", "utf8"));

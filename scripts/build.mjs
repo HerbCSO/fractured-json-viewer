@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 import { build } from "esbuild";
 import { mkdir, cp, rm, stat } from "node:fs/promises";
 import path from "node:path";

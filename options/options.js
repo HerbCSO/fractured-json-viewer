@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /* global browser */
 
 const KEY = "fjv_settings";

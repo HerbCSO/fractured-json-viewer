@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /* global browser */
 
 const STORAGE_KEY_ENABLED = "fjv_enabled";
