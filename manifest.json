@@ -32,5 +32,15 @@
     "vendor/prism/prism.js",
     "vendor/prism/prism-json.js",
     "vendor/prism/prism.css"
-  ]
+  ],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fractured-json-viewer@herbcso",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  }
 }

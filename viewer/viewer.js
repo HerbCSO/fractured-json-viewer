@@ -255,61 +255,94 @@ function computeVisibleIds(model, keepMap) {
 function makeRowEl() {
   const row = document.createElement("div");
   row.className = "row";
-  row.innerHTML = `
-    <span class="twisty"></span>
-    <span class="node"></span>
-  `;
+
+  const twisty = document.createElement("span");
+  twisty.className = "twisty";
+
+  const node = document.createElement("span");
+  node.className = "node";
+
+  row.appendChild(twisty);
+  row.appendChild(node);
   return row;
 }
 
-function setRowContent(rowEl, n, { isMatch, query, pathFormat }) {
+function appendHighlightedText(parent, text, query) {
+  const q = (query || "").toLowerCase().trim();
+  if (!q) {
+    parent.appendChild(document.createTextNode(text));
+    return;
+  }
+
+  const low = text.toLowerCase();
+  let i = 0;
+  while (true) {
+    const hit = low.indexOf(q, i);
+    if (hit === -1) {
+      parent.appendChild(document.createTextNode(text.slice(i)));
+      return;
+    }
+    if (hit > i) parent.appendChild(document.createTextNode(text.slice(i, hit)));
+
+    const mark = document.createElement("span");
+    mark.className = "match";
+    mark.textContent = text.slice(hit, hit + q.length);
+    parent.appendChild(mark);
+
+    i = hit + q.length;
+  }
+}
+
+function setRowContent(rowEl, n, { query, pathFormat }) {
   const twisty = rowEl.querySelector(".twisty");
   const node = rowEl.querySelector(".node");
 
   const hasKids = (n.type === "array" || n.type === "object") && n.children.length > 0;
   twisty.textContent = hasKids ? (n.expanded ? "▾" : "▸") : " ";
 
-  const indentPx = n.depth * 14;
-  rowEl.style.paddingLeft = `${indentPx}px`;
+  rowEl.style.paddingLeft = `${n.depth * 14}px`;
 
-  // path for context menu
-  const pathTokens = n.pathTokens;
-  const pointer = toJsonPointer(pathTokens);
-  const jpath = toJsonPath(pathTokens);
+  // path metadata for context menu
+  const pointer = toJsonPointer(n.pathTokens);
+  const jpath = toJsonPath(n.pathTokens);
   rowEl.dataset.pointer = pointer;
   rowEl.dataset.jsonpath = jpath;
   rowEl.dataset.path = pathFormat === "jsonpath" ? jpath : pointer;
 
-  const keyPart = n.key == null ? "" : `${JSON.stringify(n.key)}: `;
-  const prev = previewOf(n.value);
-  const typePunc =
-    (n.type === "object") ? "{…}" :
-    (n.type === "array") ? "[…]" : "";
+  // Clear existing content (no innerHTML)
+  while (node.firstChild) node.removeChild(node.firstChild);
 
-  // simple match highlighting for the query in key/preview (not fancy, but fast)
-  const q = normalize(query).trim();
-  function hi(text) {
-    if (!q) return escapeHtml(text);
-    const low = text.toLowerCase();
-    const i = low.indexOf(q);
-    if (i < 0) return escapeHtml(text);
-    const a = text.slice(0, i);
-    const b = text.slice(i, i + q.length);
-    const c = text.slice(i + q.length);
-    return `${escapeHtml(a)}<span class="match">${escapeHtml(b)}</span>${escapeHtml(c)}`;
+  // key part
+  if (n.key != null) {
+    const keySpan = document.createElement("span");
+    keySpan.className = "key";
+    appendHighlightedText(keySpan, `${JSON.stringify(n.key)}: `, query);
+    node.appendChild(keySpan);
   }
 
-  const valClass =
+  // container punctuation for arrays/objects
+  const typePunc =
+    n.type === "object" ? "{…}" :
+    n.type === "array" ? "[…]" : "";
+
+  if (typePunc) {
+    const p = document.createElement("span");
+    p.className = "punc";
+    p.textContent = typePunc + " ";
+    node.appendChild(p);
+  }
+
+  // preview/value
+  const prev = previewOf(n.value);
+  const v = document.createElement("span");
+  v.className =
     n.type === "string" ? "val-string" :
     n.type === "number" ? "val-number" :
     n.type === "bool" ? "val-bool" :
     n.type === "null" ? "val-null" : "preview";
 
-  const keyHtml = keyPart ? `<span class="key">${hi(keyPart)}</span>` : "";
-  const puncHtml = typePunc ? `<span class="punc">${typePunc}</span>` : "";
-  const prevHtml = `<span class="${valClass}">${hi(prev)}</span>`;
-
-  node.innerHTML = `${keyHtml}${puncHtml}${puncHtml ? " " : ""}${prevHtml}`;
+  appendHighlightedText(v, prev, query);
+  node.appendChild(v);
 }
 
 function escapeHtml(s) {
