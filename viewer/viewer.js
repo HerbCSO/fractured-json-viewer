@@ -426,7 +426,23 @@ async function copyToClipboard(text) {
   await navigator.clipboard.writeText(text);
 }
 
+let copyMenuHost = null;
 let activeCopyMenu = null;
+
+function ensureCopyMenuHost() {
+  if (copyMenuHost) return copyMenuHost;
+
+  const host = document.createElement("div");
+  host.id = "copyMenuHost";
+  host.style.position = "fixed";
+  host.style.inset = "0";
+  host.style.zIndex = "999999";
+  host.style.pointerEvents = "none"; // menu will re-enable
+  document.documentElement.appendChild(host);
+
+  copyMenuHost = host;
+  return host;
+}
 
 function closeCopyMenu() {
   if (activeCopyMenu) activeCopyMenu.remove();
@@ -436,10 +452,14 @@ function closeCopyMenu() {
 function openCopyMenu({ x, y, items }) {
   closeCopyMenu();
 
+  const host = ensureCopyMenuHost();
+
   const menu = document.createElement("div");
   menu.className = "copyMenu";
+  menu.style.position = "fixed";       // fixed relative to viewport overlay
   menu.style.left = `${x}px`;
   menu.style.top = `${y}px`;
+  menu.style.pointerEvents = "auto";   // allow clicks
 
   for (const it of items) {
     if (it.hidden) continue;
@@ -458,19 +478,22 @@ function openCopyMenu({ x, y, items }) {
     menu.appendChild(btn);
   }
 
-  document.body.appendChild(menu);
+  host.appendChild(menu);
   activeCopyMenu = menu;
 
-  // clamp inside viewport
+  // Clamp to viewport
   const r = menu.getBoundingClientRect();
-  if (r.right > window.innerWidth) menu.style.left = `${Math.max(0, x - r.width)}px`;
-  if (r.bottom > window.innerHeight) menu.style.top = `${Math.max(0, y - r.height)}px`;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  if (r.right > vw) menu.style.left = `${Math.max(0, x - r.width)}px`;
+  if (r.bottom > vh) menu.style.top = `${Math.max(0, y - r.height)}px`;
 }
 
 document.addEventListener("click", (e) => {
-  // close unless click is inside menu
   if (activeCopyMenu && !activeCopyMenu.contains(e.target)) closeCopyMenu();
 });
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeCopyMenu();
 });
