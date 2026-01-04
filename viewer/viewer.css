@@ -116,8 +116,9 @@ pre.code {
   padding: 6px;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(30,30,30,0.98);
+  background: rgba(30,30,30,1);
   box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+  isolation: isolate;
 }
 
 .copyMenuItem {
